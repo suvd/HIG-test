@@ -1,0 +1,1611 @@
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-steps/1.1.0/jquery.steps.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.js"></script>
+    <script>
+        //  json2.js
+        //  2017-06-12
+        //  Public Domain.
+        //  NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+
+        //  USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
+        //  NOT CONTROL.
+
+        //  This file creates a global JSON object containing two methods: stringify
+        //  and parse. This file provides the ES5 JSON capability to ES3 systems.
+        //  If a project might run on IE8 or earlier, then this file should be included.
+        //  This file does nothing on ES5 systems.
+        //  This is a reference implementation. You are free to copy, modify, or
+        //  redistribute.
+
+
+
+        if (typeof JSON !== "object") {
+            JSON = {};
+        }
+
+        (function () {
+            "use strict";
+
+            var rx_one = /^[\],:{}\s]*$/;
+            var rx_two = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g;
+            var rx_three = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
+            var rx_four = /(?:^|:|,)(?:\s*\[)+/g;
+            var rx_escapable = /[\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+            var rx_dangerous = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+
+            function f(n) {
+                // Format integers to have at least two digits.
+                return (n < 10)
+                    ? "0" + n
+                    : n;
+            }
+
+            function this_value() {
+                return this.valueOf();
+            }
+
+            if (typeof Date.prototype.toJSON !== "function") {
+
+                Date.prototype.toJSON = function () {
+
+                    return isFinite(this.valueOf())
+                        ? (
+                            this.getUTCFullYear()
+                            + "-"
+                            + f(this.getUTCMonth() + 1)
+                            + "-"
+                            + f(this.getUTCDate())
+                            + "T"
+                            + f(this.getUTCHours())
+                            + ":"
+                            + f(this.getUTCMinutes())
+                            + ":"
+                            + f(this.getUTCSeconds())
+                            + "Z"
+                        )
+                        : null;
+                };
+
+                Boolean.prototype.toJSON = this_value;
+                Number.prototype.toJSON = this_value;
+                String.prototype.toJSON = this_value;
+            }
+
+            var gap;
+            var indent;
+            var meta;
+            var rep;
+
+
+            function quote(string) {
+
+
+                rx_escapable.lastIndex = 0;
+                return rx_escapable.test(string)
+                    ? "\"" + string.replace(rx_escapable, function (a) {
+                        var c = meta[a];
+                        return typeof c === "string"
+                            ? c
+                            : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+                    }) + "\""
+                    : "\"" + string + "\"";
+            }
+
+
+            function str(key, holder) {
+
+                // Produce a string from holder[key].
+
+                var i;          // The loop counter.
+                var k;          // The member key.
+                var v;          // The member value.
+                var length;
+                var mind = gap;
+                var partial;
+                var value = holder[key];
+
+
+
+                if (
+                    value
+                    && typeof value === "object"
+                    && typeof value.toJSON === "function"
+                ) {
+                    value = value.toJSON(key);
+                }
+
+
+
+                if (typeof rep === "function") {
+                    value = rep.call(holder, key, value);
+                }
+
+
+
+                switch (typeof value) {
+                    case "string":
+                        return quote(value);
+
+                    case "number":
+
+
+
+                        return (isFinite(value))
+                            ? String(value)
+                            : "null";
+
+                    case "boolean":
+                    case "null":
+
+
+                        return String(value);
+
+
+                    case "object":
+
+
+
+                        if (!value) {
+                            return "null";
+                        }
+
+
+
+                        gap += indent;
+                        partial = [];
+
+
+
+                        if (Object.prototype.toString.apply(value) === "[object Array]") {
+
+
+
+                            length = value.length;
+                            for (i = 0; i < length; i += 1) {
+                                partial[i] = str(i, value) || "null";
+                            }
+
+
+
+                            v = partial.length === 0
+                                ? "[]"
+                                : gap
+                                    ? (
+                                        "[\n"
+                                        + gap
+                                        + partial.join(",\n" + gap)
+                                        + "\n"
+                                        + mind
+                                        + "]"
+                                    )
+                                    : "[" + partial.join(",") + "]";
+                            gap = mind;
+                            return v;
+                        }
+
+                        if (rep && typeof rep === "object") {
+                            length = rep.length;
+                            for (i = 0; i < length; i += 1) {
+                                if (typeof rep[i] === "string") {
+                                    k = rep[i];
+                                    v = str(k, value);
+                                    if (v) {
+                                        partial.push(quote(k) + (
+                                            (gap)
+                                                ? ": "
+                                                : ":"
+                                        ) + v);
+                                    }
+                                }
+                            }
+                        } else {
+
+
+                            for (k in value) {
+                                if (Object.prototype.hasOwnProperty.call(value, k)) {
+                                    v = str(k, value);
+                                    if (v) {
+                                        partial.push(quote(k) + (
+                                            (gap)
+                                                ? ": "
+                                                : ":"
+                                        ) + v);
+                                    }
+                                }
+                            }
+                        }
+
+
+                        v = partial.length === 0
+                            ? "{}"
+                            : gap
+                                ? "{\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "}"
+                                : "{" + partial.join(",") + "}";
+                        gap = mind;
+                        return v;
+                }
+            }
+
+            if (typeof JSON.stringify !== "function") {
+                meta = {    // table of character substitutions
+                    "\b": "\\b",
+                    "\t": "\\t",
+                    "\n": "\\n",
+                    "\f": "\\f",
+                    "\r": "\\r",
+                    "\"": "\\\"",
+                    "\\": "\\\\"
+                };
+                JSON.stringify = function (value, replacer, space) {
+
+                    var i;
+                    gap = "";
+                    indent = "";
+
+
+                    if (typeof space === "number") {
+                        for (i = 0; i < space; i += 1) {
+                            indent += " ";
+                        }
+
+
+                    } else if (typeof space === "string") {
+                        indent = space;
+                    }
+
+                    rep = replacer;
+                    if (replacer && typeof replacer !== "function" && (
+                        typeof replacer !== "object"
+                        || typeof replacer.length !== "number"
+                    )) {
+                        throw new Error("JSON.stringify");
+                    }
+
+                    return str("", { "": value });
+                };
+            }
+
+            if (typeof JSON.parse !== "function") {
+                JSON.parse = function (text, reviver) {
+
+
+                    var j;
+
+                    function walk(holder, key) {
+
+
+
+                        var k;
+                        var v;
+                        var value = holder[key];
+                        if (value && typeof value === "object") {
+                            for (k in value) {
+                                if (Object.prototype.hasOwnProperty.call(value, k)) {
+                                    v = walk(value, k);
+                                    if (v !== undefined) {
+                                        value[k] = v;
+                                    } else {
+                                        delete value[k];
+                                    }
+                                }
+                            }
+                        }
+                        return reviver.call(holder, key, value);
+                    }
+
+                    text = String(text);
+                    rx_dangerous.lastIndex = 0;
+                    if (rx_dangerous.test(text)) {
+                        text = text.replace(rx_dangerous, function (a) {
+                            return (
+                                "\\u"
+                                + ("0000" + a.charCodeAt(0).toString(16)).slice(-4)
+                            );
+                        });
+                    }
+
+
+                    if (
+                        rx_one.test(
+                            text
+                                .replace(rx_two, "@")
+                                .replace(rx_three, "]")
+                                .replace(rx_four, "")
+                        )
+                    ) {
+                        j = eval("(" + text + ")");
+
+                        return (typeof reviver === "function")
+                            ? walk({ "": j }, "")
+                            : j;
+                    }
+
+                    throw new SyntaxError("JSON.parse");
+                };
+            }
+        }());
+    </script>
+    <style>
+        /*
+        body {
+            overflow: scroll;
+        }
+
+        .typo-style-8 {
+            position: absolute;
+            left: 20px;
+            top: 10px;
+        }
+
+        i.tooltip {
+            cursor: pointer;
+            margin-left: 5px;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background: blue;
+            text-align: center;
+            background: #00C4FF;
+            border-radius: 100%;
+            color: #FFF;
+            line-height: 20px;
+        }
+
+        .c-validation-message {
+            display: none;
+        }
+
+        .typo-style-9 {
+            color: red;
+            font-size: 16px;
+            font-family: 'Lato', sans-serif;
+            font-weight: 300;
+            font-style: italic;
+        }
+
+        .icon-style-1::before {
+            color: #D10000;
+        }
+
+        .icon-circle-minus:before {
+            content: "\e95c";
+        }
+
+        .icon-style-1 {
+            margin-right: 10px;
+        }
+
+        [class^="icon-"], [class*=" icon-"] {
+            font-family: 'icomoon' !important;
+            speak: none;
+            font-style: normal;
+            font-weight: normal;
+            font-variant: normal;
+            text-transform: none;
+            line-height: 1;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        i {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font: inherit;
+            font-size: 100%;
+            vertical-align: baseline;
+        }
+
+        .button-style-3 {
+            color: #D10000;
+            font-size: 16px;
+            font-family: 'Dosis', sans-serif;
+            font-weight: 500;
+        }
+
+        .button-style-1 {
+            color: #FFF;
+            font-size: 16px;
+            font-family: 'Dosis', sans-serif;
+            font-weight: 500;
+            display: inline-block;
+            background: #24B2B3;
+            width: 270px;
+            text-align: center;
+            text-decoration: none;
+            line-height: 40px;
+            cursor: pointer;
+            -webkit-transition: background 0.25s ease;
+            -o-transition: background 0.25s ease;
+            transition: background 0.25s ease;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba( 255, 255, 255, .8 ) url('http://i.stack.imgur.com/FhHRx.gif') 50% 50% no-repeat;
+        }
+
+        body.loading .modal {
+            overflow: hidden;
+        }
+
+        body.loading .modal {
+            display: block;
+        }*/
+    </style>
+    <div id="stap0" style="display: inline-block;">
+        LEEFTIJD <p>Ben je 18 jaar of ouder?*</p>
+        <input type="radio" name="leeftijd_a" id="leeftijd_1" value="1" onclick="ActieJa();" checked="checked">
+        <label for="leeftijd_1">Ja</label>
+        <br />
+        <input type="radio" name="leeftijd_a" id="leeftijd_2" value="2" onclick="ActieNeen();">
+        <label for="leeftijd_2">Neen</label>
+        <br />
+        <input type="radio" name="leeftijd_a" id="leeftijd_3" value="is ontvoogd" onclick="ActieOntvoogdOfBegeleiding();">
+        <label for="leeftijd_2">Neen, maar ik ben ontvoogd.</label><i title="Je bent ontvoogd wanneer je wettelijk geen ouders of familieleden hebt die voor je zorgen. Dit kan doordat je al gehuwd bent of doordat de jeugdrechter dit beslist heeft." class="tooltip">i</i>
+        <br />
+        <input type="radio" name="leeftijd_a" id="leeftijd_4" value="woont zelfstandig met begeleiding" onclick="ActieOntvoogdOfBegeleiding();">
+        <label for="leeftijd_2">Neen, maar ik woon begeleid zelfstandig of ik plan in de toekomst begeleid zelfstandig te gaan wonen.</label>
+        <br />
+        <div class="c-validation-message">
+            <div class="spacer-10"></div>
+            <div class="typo-style-9">
+                Dit is een verplicht veld
+            </div>
+        </div>
+
+        <div id="MsgBox" style="display:none;">
+            <div class="box-style-2">
+                <p class="typo-style-8">
+                    Je kan je uitzonderlijk toch inschrijven. Gelieve hiervoor naar Cordium te komen en de nodige bewijsdocumenten mee te brengen.
+                    <a href="https://www.cordium.be/contact/" target="_blank">Openingsuren Cordium</a>
+                </p>
+            </div>
+        </div>
+
+        <div id="MsgBox0" style="display: none;">
+            <div class="box-style-2">
+                <p class="typo-style-8">
+                    Je komt wettelijk gezien niet in aanmerking voor het huren van een sociale woning.
+                    Wij kunnen je helaas niet inschrijven.
+                </p>
+            </div>
+        </div>
+
+
+        <br />
+        EIGENDOM <p>Heb je een woning of perceel volledig of gedeeltelijk in volle eigendom of in vruchtgebruik in binnen- of buitenland? *</p>
+        <input type="radio" name="eigendom_a" id="eigendom_1" value="1" onclick="ActieJa2();">
+        <label for="eigendom_1">Ja</label>
+        <br />
+        <input type="radio" name="eigendom_a" id="eigendom_2" value="2" onclick="ActieNeen2();" checked="checked">
+        <label for="eigendom_2">Neen</label>
+        <br />
+        <div class="c-validation-message">
+            <div class="spacer-10"></div>
+            <div class="typo-style-9">
+                Dit is een verplicht veld
+            </div>
+        </div>
+        <div id="MsgBox2" style="display: none;">
+            <div class="box-style-2">
+                <p class="typo-style-8">
+                    Je komt wettelijk gezien niet in aanmerking voor het huren van een sociale woning.
+                    Wij kunnen je helaas niet inschrijven.
+                    Hierop zijn echter enkele uitzonderingen mogelijk.
+                    <a target="_blank" href="https://www.cordium.be/ik-wil-huren-kopen/kom-ik-in-aanmerking-voor-een-huurwoning-2/voorwaarde4_eigendom/">Meer info hierover</a>
+                    Wanneer je voldoet aan een van deze uitzonderingen, gelieve dan naar Cordium te komen en de nodige bewijsdocumenten mee te brengen.
+                    <a target="_blank" href="https://www.cordium.be/contact/">Openingsuren Cordium</a>
+                </p>
+            </div>
+        </div>
+
+        <div>
+            <button id="btnConfirm0" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VolgendeStap1(); return false">Volgende stap ></button>
+        </div>
+    </div>
+    <div id="stap1" style="display: none;">
+        <label>
+            AANVRAGER
+        </label>
+
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        Naam * (eerst familienaam invullen, dan voornaam)
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required="required" id="Aanvrager_Naam" style="width: 400px;" value="test example">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Rijksregisternummer *
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required="required" placeholder="__.__.__-___.__" id="Aanvrager_INSZ" value="91121426351">
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        Straatnaam *
+                    </td>
+                    <td>
+                        Huisnr *
+                    </td>
+                    <td>
+                        Bus
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" required="required" id="Aanvrager_Straat" value="TEST STREET">
+                    </td>
+                    <td>
+                        <input type="text" required="required" id="Aanvrager_Huisnr" value="11">
+                    </td>
+                    <td>
+                        <input type="text" required="required" id="Aanvrager_Busnr" value="">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Postcode *
+                    </td>
+                    <td>
+                        Gemeente *
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="number" required="required" id="gemeenteCode" min="0000" step="1" value="9000">
+                    </td>
+                    <td>
+                        <input type="text" required="required" id="gemeente" value="Gent">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Emailadres *
+                    </td>
+                    <td>
+                        Telefoonnummer / GSM *
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="email" required="required" id="emailadres" pattern=".+@.+" value="gash@gashnet.be">
+                    </td>
+                    <td>
+                        <input type="tel" required="required" id="telgsmnr" value="0472077741">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br />
+        <label>
+            INWONER(S)
+        </label>
+        <div>
+            <div class="col-12">
+                <div class="box-style-7">
+                    <p>Zijn er andere inwoners die mee verhuizen? *</p>
+                    <input type="radio" name="is-extra" id="extra-n" value="false" onclick="GeenExtraInwoners();">
+                    <label for="extra-n">Nee</label>
+
+                    <input type="radio" name="is-extra" id="extra-y" value="true" onclick="ExtraInwoners();">
+                    <label for="extra-y" class="jcf-label-active">Ja</label>
+
+                    <div class="c-validation-message">
+                        <div class="typo-style-9" style="display: none;">
+                            Dit is een verplicht veld
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div id="extraInwoners" style="display: none;">
+                    <a id="aantal" style="display: none;">1</a>
+                    <div id="inw1">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                    <div id="inw2" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                    <div id="inw3" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                    <div id="inw4" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                    <div id="inw5" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                    <div id="inw6" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                    <div id="inw7" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                    <div id="inw8" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                    <div id="inw9" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                    <div id="inw10" style="display: none;">
+                        <table>
+                            <tr>
+                                <td>
+                                    Naam * (eerst familienaam invullen, dan voornaam)
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Rijksregisternummer *
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                                </td>
+                            </tr>
+                        </table>
+                        <br />
+                        <i class="icon-circle-minus icon-style-1" />
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                        <br />
+                        <br />
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div>
+            <button id="btnConfirm01" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap0(); return false">Vorige stap <</button>
+        </div>
+        <div>
+            <button id="btnConfirm" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VolgendeStap2_1(); return false">Volgende stap ></button>
+        </div>
+    </div>
+
+    <div id="stap2_1" style="display:none">
+        <label>KOMPLEXKEUZES - Gemeente kiezen</label>
+        <br />
+        <div id="gemeenteKeuze">
+
+        </div>
+
+        <div id="uw_toepasbarewoningen">
+            <p class="typo-style-18">
+                Totaal aantal woningen waarvoor jij in aanmerking komt in alle gemeentes
+            </p>
+            <p id="aantal_uw_toepasbarewoningen">0</p>
+        </div>
+
+        <div>
+            <button id="btnConfirm02" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap1(); return false">Vorige stap <</button>
+        </div>
+
+        <div>
+            <button id="btnConfirm2" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VolgendeStap2(); return false">Volgende stap ></button>
+        </div>
+    </div>
+
+
+    <div id="stap2" style="display:none">
+        <label>KOMPLEXKEUZES</label>
+        <br />
+        <br />
+        <br />
+        <div id="komplexkeuzes">
+
+        </div>
+        <div id="uw_gekozenwoningen">
+            <p class="typo-style-18">
+                Totaal aantal woningen waarvoor jij gekozen hebt
+            </p>
+            <p id="aantal_uw_gekozenwoningen">0</p>
+        </div>
+
+        <div>
+            <button id="btnConfirm02" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap2_1(); return false">Vorige stap <</button>
+        </div>
+
+        <div>
+            <button id="btnConfirm2" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VolgendeStap3(); return false">Volgende stap ></button>
+        </div>
+    </div>
+
+    <div id="stap3" style="display:none">
+
+        <label>WONINGKEUZES</label>
+        <br />
+
+        <div id="woningkeuzes">
+
+        </div>
+
+        <div>
+            <button id="btnConfirm33" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap2(); return false">Vorige stap <</button>
+        </div>
+        <div>
+            <button id="btnConfirm3" type="submit" value="submit" style="width: 150px; height:30px;" onclick="FinalStap(); return false">Volgende stap ></button>
+        </div>
+    </div>
+
+
+    <div id="finalStep" style="display:none">
+        <label>ATTESTEN-DOCUMENTEN</label>
+
+        <div id="attestdocs">
+
+        </div>
+
+        <div>
+            <button id="btnConfirm04" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap3(); return false">Vorige stap <</button>
+        </div>
+        <div>
+            <button id="btnConfirm4" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VerstuurAanvraag()">Verstuur aanvraag ></button>
+        </div>
+
+        <input id="AttestDoc1" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc2" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc3" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc4" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc5" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc6" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc7" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc8" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc9" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc10" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc11" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc12" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc13" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc14" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc15" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc16" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc17" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc18" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc19" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc20" type="hidden" name="AttestDocs" value="" />
+
+    </div>
+    <div class="modal"></div>
+    <script>
+        var hostservernaam = "https://higpow2.digiportaal.be:6002";
+        var Ko_Registertype_Id = 1;
+
+        function CheckedChangeKeuze() {
+            if (this.checked) {
+                $(this).siblings(":last").show();
+                var keuze = $(this).siblings(":last");
+                var getalKeuze = keuze[0].innerText.split(' ')[0];
+                var som = parseInt($("#aantal_uw_gekozenwoningen").text()) + parseInt(getalKeuze);
+                $("#aantal_uw_gekozenwoningen").text(som);
+            }
+            else {
+                $(this).siblings(":last").hide();
+                var keuze = $(this).siblings(":last");
+                var getalKeuze = keuze[0].innerText.split(' ')[0];
+                var som = parseInt($("#aantal_uw_gekozenwoningen").text()) - parseInt(getalKeuze);
+                $("#aantal_uw_gekozenwoningen").text(som);
+            }
+        }
+
+        function ActieOntvoogdOfBegeleiding() {
+            $("#MsgBox").css("display", "inline-block");
+            $("#MsgBox0").css("display", "none");
+            $("#MsgBox2").css("display", "none");
+            $(".c-validation-message").css("display", "none");
+            $(".typo-style-8").css("color", "lightblue");
+            var opm = $('input[name=leeftijd_a]:checked').val();
+        }
+
+        function ActieJa() {
+            var msg = $("#MsgBox");
+            $("#MsgBox").css("display", "none");
+            $("#MsgBox0").css("display", "none");
+            $("#MsgBox2").css("display", "none");
+            $(".c-validation-message").css("display", "none");
+        }
+
+        function ActieNeen() {
+            $("#MsgBox0").css("display", "inline-block");
+            $(".typo-style-8").css("color", "red");
+            $("#MsgBox").css("display", "none");
+            $("#MsgBox2").css("display", "none");
+            $(".c-validation-message").css("display", "none");
+            $("#btnConfirm0").prop("disabled", true);
+        }
+
+        function ActieJa2() {
+            $("#MsgBox2").css("display", "inline-block");
+            $("#MsgBox0").css("display", "none");
+            $("#MsgBox").css("display", "none");
+            $(".typo-style-8").css("color", "red");
+            $(".c-validation-message").css("display", "none");
+            $("#btnConfirm0").prop("disabled", true);
+        }
+
+        function ActieNeen2() {
+            $("#MsgBox2").css("display", "none");
+            $("#MsgBox0").css("display", "none");
+            $("#MsgBox").css("display", "none");
+            $(".c-validation-message").css("display", "none");
+            $("#btnConfirm0").prop("disabled", false);
+        }
+
+        function GeenExtraInwoners() {
+            $("#extraInwoners").css("display", "none");
+            $(".c-validation-message").css("display", "none");
+            var aantal = $('#aantal').text();
+            var counter = parseInt(aantal) - 1;
+            $('#aantal').text(counter);
+        }
+
+        function ExtraInwoners() {
+            $("#extraInwoners").css("display", "inline-block");
+            var aantal = $('#aantal').text();
+            var counter = parseInt(aantal) + 1;
+            $('#aantal').text(counter);
+        }
+
+        function DeleteInwoner() {
+            var aantal = $('#aantal').text();
+            var counter = parseInt(aantal);
+            if (counter <= 0) {
+                $('#extra-n').prop("checked", true);
+            }
+            var cp = $("#inw" + counter).html();
+            $("#inw" + counter).css("display", "none");
+        }
+
+        function AddInwoner() {
+            var aantal = $('#aantal').text();
+            var counter = parseInt(aantal) + 1;
+            $('#aantal').text(counter);
+            var cp = $("#extraInwoners").html();
+            $("#inw" + counter).css("display", "inline-block");
+        }
+
+        function VolgendeStap1() {
+            var leeftijdchk = $('input[name=leeftijd_a]:checked').val();
+            var eigendomchk = $('input[name=eigendom_a]:checked').val();
+            if (leeftijdchk !== undefined && leeftijdchk !== "" && eigendomchk !== undefined && eigendomchk !== "") {
+                $("#stap0").css("display", "none");
+                $("#stap1").css("display", "inline-block");
+            }
+            else {
+                $(".c-validation-message").css("display", "inline-block");
+            }
+        }
+
+        function VorigeStap0() {
+            $("#stap1").css("display", "none");
+            $("#stap0").css("display", "inline-block");
+        }
+
+
+        function VorigeStap1() {
+            $("#stap2_1").css("display", "none");
+            $("#stap1").css("display", "inline-block");
+        }
+
+        function VorigeStap2_1() {
+            $("#stap2").css("display", "none");
+            $("#stap2_1").css("display", "inline-block");
+        }
+
+        function VolgendeStap2_1() {
+            $("#stap1").css("display", "none");
+            var aantalInwoners = $('#aantal').text();
+
+            jQuery.ajax({
+                type: "GET",
+                url: hostservernaam + "/API/DMZ/Komplex/GetKeuzeGemeentes",
+                success: function (data) {
+                    if (data !== null) {
+						var ulGemeenteId = document.getElementById("ul_Gemeentes1");
+                        if (!ulGemeenteId) 
+						{
+							var ulGemeente = document.createElement("ul");
+							ulGemeente.id = "ul_Gemeentes1";
+
+							for (var i = 0; i < data.length; i++) {
+								var liGemeente = document.createElement("li");
+								liGemeente.id = "li_Gemeente1_" + data[i].Omschrijving;
+
+								var chkboxGemeente = document.createElement("input");
+								chkboxGemeente.type = "checkbox";
+								chkboxGemeente.id = "gemeenteBox_" + data[i].Gemeente_ID + "_" + data[i].Code + "_" + data[i].Omschrijving;
+								chkboxGemeente.className = "GemeenteClass";
+								chkboxGemeente.value = data[i].Gemeente_ID;
+
+								var lblGemeente = document.createElement("label");
+								lblGemeente.setAttribute("for", "gemeenteBox_" + data[i].Gemeente_ID + "_" + data[i].Code + "_" + data[i].Omschrijving);
+								lblGemeente.innerText = data[i].Code + " " + data[i].Omschrijving;
+
+								liGemeente.appendChild(chkboxGemeente);
+								liGemeente.appendChild(lblGemeente);
+
+								ulGemeente.appendChild(liGemeente);
+							}
+							var gemeenteKeuze = document.getElementById("gemeenteKeuze");
+							gemeenteKeuze.appendChild(ulGemeente);
+						}
+                    }
+                }
+            });
+
+            var somAantalVerhuurbarePanden = 0;
+            jQuery.ajax({
+                type: "GET",
+                url: hostservernaam + "/API/DMZ/Komplex/GetKandidaatKomplexKeuzes/" + aantalInwoners + "/" + Ko_Registertype_Id + "/" + "",
+                success: function (data) {
+                    if (data !== null) {
+                        for (var i = 0; i < data.length; i++) {
+                            somAantalVerhuurbarePanden = somAantalVerhuurbarePanden + data[i].AantalVerhuurbarePanden;
+                        }
+                    }
+                    $("#aantal_uw_toepasbarewoningen").text(somAantalVerhuurbarePanden);
+                }
+            });
+
+
+            $("#stap2_1").css("display", "inline-block");
+        }
+
+        function VolgendeStap2() {
+            $("#stap2_1").css("display", "none");
+            var aantalInwoners = $('#aantal').text();
+            var gekozenGemeentesChkBoxes = $('.GemeenteClass:checkbox:checked')
+            var arrGekozenGemeentes = $(".GemeenteClass:checkbox:checked")
+                .map(function () {
+                    return this.value;
+                })
+                .get()
+                .join(",");
+
+            jQuery.ajax({
+                type: "GET",
+                url: hostservernaam + "/API/DMZ/Komplex/GetKandidaatKomplexKeuzes/" + aantalInwoners + "/" + Ko_Registertype_Id + "/" + arrGekozenGemeentes,
+                success: function (data) {
+                    var objWoningType = 0;
+                    var objSlpks = 0;
+                    var objGemeente = "";
+                    var objKomplex = "";
+
+                    if (data !== null) {
+					    var ulGemeenteId = document.getElementById("ul_Gemeentes");
+                        if (!ulGemeenteId)
+                        {
+							var ulGemeente = document.createElement("ul");
+							ulGemeente.id = "ul_Gemeentes";
+							var komplexkeuzes = document.getElementById("komplexkeuzes");
+							for (var i = 0; i < data.length; i++) {
+								objWoningType = data[i].Type;
+								objSlpks = data[i].Slaapkamers;
+								objKomplex = {
+									Komplex: data[i].Omschrijving
+								}
+
+								var chkbox = document.createElement("input");
+								chkbox.type = "checkbox";
+								chkbox.id = data[i].Komplex_ID + "-" + data[i].Slaapkamers + "-" + data[i].Type_ID + "-" + data[i].Type.replace('.', '').trim();
+								chkbox.className = "WoningTypeClass";
+								chkbox.name = "Komplex";
+								chkbox.addEventListener("change", CheckedChangeKeuze)
+
+								var lbl = document.createElement("label");
+								lbl.id = "lbl_" + data[i].Komplex_ID;
+								lbl.setAttribute("for", "typeBox_" + data[i].Komplex_ID + "_" + data[i].Type + "_" + data[i].Slaapkamers);
+								lbl.innerText = objWoningType + ' ' + objSlpks + ' slaapkamer(s) ' + objKomplex.Komplex;
+
+								var lblVerhuurbarePanden = document.createElement("label");
+								lblVerhuurbarePanden.id = "lbl_VHPand_" + data[i].Code + "_" + data[i].Omschrijving;
+								lblVerhuurbarePanden.setAttribute("for", "verhuurbaarpandBox_" + data[i].Gemeente_ID + "_" + data[i].Code + "_" + data[i].Omschrijving);
+								lblVerhuurbarePanden.innerText = data[i].AantalVerhuurbarePanden + " panden";
+								lblVerhuurbarePanden.style.display = 'none';
+
+								var brNextLine = document.createElement("br");
+
+								var liGemeente = document.createElement("li");
+								liGemeente.id = "li_Gemeente_" + objKomplex.Komplex;
+
+								liGemeente.appendChild(chkbox);
+								liGemeente.appendChild(lbl);
+								liGemeente.appendChild(brNextLine);
+								liGemeente.appendChild(lblVerhuurbarePanden);
+
+								ulGemeente.appendChild(liGemeente);
+							}
+							komplexkeuzes.appendChild(ulGemeente);
+						}
+                    }
+                }
+            });
+
+            $("#stap2").css("display", "inline-block");
+        }
+
+        function VolgendeStap3() {
+            var keuzePercentage = parseInt($("#aantal_uw_gekozenwoningen").text()) / parseInt($("#aantal_uw_toepasbarewoningen").text()) * 100;
+            var blnGaVerder = true;
+            var strTextKeuzes = "";
+            if (keuzePercentage >= 30) {
+                strTextKeuzes = "U heeft 30% of meer van de panden van de keuze-komplexen geselecteerd. Deze keuzes volstaan.";
+            }
+            else if (keuzePercentage < 30) {
+                strTextKeuzes = "U heeft minder dan 30% van de panden van de keuze-komplexen geselecteerd. Dit is te weinig, selecteer aub meer.";
+                blnGaVerder = false;
+            }
+
+            alert(strTextKeuzes);
+            alert("U heeft " + $("#aantal_uw_gekozenwoningen").text() + " woningen aangevinkt.");
+
+            if (blnGaVerder) {
+                $("#stap2").css("display", "none");
+
+                jQuery.ajax({
+                    type: "GET",
+                    url: hostservernaam + "/API/DMZ/Inwoner/GetWoningKeuzes",
+                    success: function (data) {
+                        if (data !== null) {
+                            for (var i = 0; i < data.length; i++) {
+							    var woningkeuzeId = document.getElementById("keuzeBox_" + data[i].ID);
+                                if (!woningkeuzeId)
+                                {
+									var chkbox = document.createElement("input");
+									chkbox.type = "checkbox";
+									chkbox.id = "keuzeBox_" + data[i].ID;
+
+									var lbl = document.createElement("label");
+									lbl.setAttribute("for", "keuzeBox_" + data[i].ID);
+									lbl.innerText = data[i].Omschrijving;
+
+									var brel = document.createElement("br");
+
+									var woningkeuzes = document.getElementById("woningkeuzes");
+									woningkeuzes.appendChild(chkbox);
+									woningkeuzes.appendChild(lbl);
+									woningkeuzes.appendChild(brel);
+								}
+                            }
+                        }
+                    }
+                });
+
+                $("#stap3").css("display", "inline-block");
+            }
+        }
+
+        function VorigeStap2() {
+            $("#stap3").css("display", "none");
+            $("#stap2").css("display", "inline-block");
+        }
+
+        function VorigeStap3() {
+            $("#finalStep").css("display", "none");
+            $("#stap3").css("display", "inline-block");
+        }
+
+        function FinalStap() {
+            $("#stap3").css("display", "none");
+
+            jQuery.ajax({
+                type: "GET",
+                url: hostservernaam + "/API/DMZ/Inwoner/GetKandidaatAttesten/" + Ko_Registertype_Id,
+                success: function (data) {
+                    if (data !== null) {
+                        var attestidx = 1;
+                        for (var i = 0; i < data.length; i++) {
+							var attestDocId = document.getElementById("pdfbestand_" + data[i].ID + "_" + data[i].Omschrijving + "_" + attestidx);
+                            if (!attestDocId)
+                            {
+								var attestNaam = document.createElement("p");
+								attestNaam.innerText = data[i].Omschrijving;
+
+								var attstDocHidden = document.createElement("input");
+								attstDocHidden.type = "hidden";
+								attstDocHidden.id = "AttestDoc" + attestidx;
+								attstDocHidden.value = "";
+
+								var attstOmsch = document.createElement("input");
+								attstOmsch.id = "pdfbestand_" + data[i].ID + "_" + data[i].Omschrijving + "_" + attestidx;
+								attstOmsch.type = "file";
+								attstOmsch.name = "other-files";
+								attstOmsch.className = "jcf-real-element";
+								attstOmsch.addEventListener("change", function (event) {
+									var upload = this;
+									var fileReader = new FileReader();
+									var attestidxSelected = upload.id.split('_')[3];
+									if (fileReader !== null) {
+										var ev = event.target.files;
+										var fileName = ev[0].name;
+										var fileBytesStr;
+										var fileList = ev;
+										fileReader.onloadend = function () {
+											fileBytesStr = fileReader.result;
+											fileBytesStr = fileReader.result.split(',')[1];
+
+											$("#AttestDoc" + attestidxSelected).val(fileBytesStr);
+										}
+										fileReader.readAsDataURL(fileList[0]);
+									}
+								}, false);
+
+								var attestdocs = document.getElementById("attestdocs");
+								attestdocs.appendChild(attestNaam);
+								attestdocs.appendChild(attstOmsch);
+								attestdocs.appendChild(attstDocHidden);
+							}
+                            attestidx = attestidx + 1;
+                        }
+                    }
+                }
+            });
+
+            $("#finalStep").css("display", "inline-block");
+        }
+
+        function VerstuurAanvraag() {
+            var aanvragerNaam = $("#Aanvrager_Naam").val();
+            var aanvragerINSZ = $("#Aanvrager_INSZ").val();
+            var aanvragerStraat = $("#Aanvrager_Straat").val();
+            var aanvragerHuisnr = $("#Aanvrager_Huisnr").val();
+            var aanvragerBusnr = $("#Aanvrager_Busnr").val();
+            var aanvragerGemeente = $("#gemeenteCode").val() + ' ' + $("#gemeente").val();
+            var aanvragerEmail = $("#emailadres").val();
+            var aanvragerGsmnr = $("#telgsmnr").val();
+            var aanvragerTelnr = "";
+            if (aanvragerGsmnr.indexOf("09") === 0 || aanvragerGsmnr.indexOf("09") === 1) {
+                aanvragerTelnr = aanvragerGsmnr;
+            }
+
+            var inwonersArr = new Array();
+            var aantal = $('#aantal').text();
+            var counter = parseInt(aantal);
+            var indexCnt = 0;
+            var blnAdd = false;
+            for (var c = 0; c < counter; c++) {
+                var obj = {
+                    Naam: "",
+                    INSZ: ""
+                };
+                $("input[name*='extra-person-" + c + "']").each(function (index, data) {
+                    var ct = indexCnt + 1;
+                    if ($("#inw" + ct).css("display") == "block" || $("#inw" + ct).css("display") == "inline-block" )
+                    {
+                        if (isNaN($(this).val())) {
+                            obj.Naam = $(this).val();
+                        }
+                        else {
+                            obj.INSZ = $(this).val();
+                            blnAdd = true;
+                        }
+                    }
+
+                    if (blnAdd == true) {
+                        inwonersArr[indexCnt] = obj;
+                        indexCnt = indexCnt + 1;
+                        blnAdd = false;
+                    }
+                });
+            }
+
+            var aanvragerOpmerking = $('input[name=leeftijd_a]:checked').val();
+            if (!isNaN(aanvragerOpmerking)) {
+                aanvragerOpmerking = "";
+            }
+            var model =
+            {
+                Naam: aanvragerNaam,
+                Straat: aanvragerStraat,
+                HuisNr: aanvragerHuisnr,
+                BusNr: aanvragerBusnr,
+                Gemeente: aanvragerGemeente,
+                EmailAdres: aanvragerEmail,
+                TelefoonNr: aanvragerTelnr,
+                GSMNr: aanvragerGsmnr,
+                INSZ: aanvragerINSZ,
+                Inwoners: inwonersArr,
+                Opmerking: aanvragerOpmerking
+            };
+
+            var json = JSON.stringify(model);
+            var contactRelatieId = 0;
+            jQuery.ajax({
+                type: "POST",
+                url: hostservernaam + "/API/DMZ/Inwoner/AanmakenKandidaat",
+                data: json,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    if (data !== null) {
+                        jQuery.ajax({
+                            type: "GET",
+                            url: hostservernaam + "/API/DMZ/Inwoner/GetContactRelatie/" + model.Naam,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data) {
+                                contactRelatieId = data;
+
+                                var attestenArr = new Array();
+                                attestenArr.length = 0;
+                                var idx = 0;
+                                $("input[name='other-files']").each(function (index, data) {
+                                    if (data.files.length !== 0) {
+                                        var fileName = data.files[0].name;
+                                        var attestIdSelected = index + 1;
+                                        var fileBytesStr = $("#AttestDoc" + attestIdSelected).val();
+
+                                        var attesttypeId = data.id.split('_')[1];
+                                        var obj = {
+                                            Attest_Type_ID: attesttypeId,
+                                            Contact_Relatie_ID: contactRelatieId,
+                                            Bestandnaam: fileName,
+                                            Bestand: fileBytesStr
+                                        };
+                                        attestenArr[idx] = obj;
+                                        idx = idx + 1;
+                                    }
+                                });
+
+                                var json2 = JSON.stringify(attestenArr);
+                                jQuery.ajax({
+                                    type: "POST",
+                                    url: hostservernaam + "/API/DMZ/Inwoner/ToevoegenKandidaatAttest",
+                                    data: json2,
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    success: function (data) {
+                                        var test = "";
+
+                                        var woningkeuzesArr = new Array();
+                                        woningkeuzesArr.length = 0;
+                                        var idx2 = 0;
+                                        $("input[id*='keuzeBox_'").each(function (index, data) {
+                                            var woningKeuzeBox = $("#" + data.id);
+                                            if ($("#" + data.id).is(":checked")) {
+                                                var woningkeuzeId = data.id.split('_')[1];
+                                                var woningkeuzeDto = {
+                                                    Woning_Keuze_ID: parseInt(woningkeuzeId),
+                                                    Contact_Relatie_ID: contactRelatieId
+                                                };
+                                                woningkeuzesArr[idx2] = woningkeuzeDto;
+                                                idx2 = idx2 + 1;
+                                            }
+                                        });
+
+                                        var json3 = JSON.stringify(woningkeuzesArr);
+                                        jQuery.ajax({
+                                            type: "POST",
+                                            url: hostservernaam + "/API/DMZ/Inwoner/SaveWoningKeuzes",
+                                            data: json3,
+                                            contentType: "application/json; charset=utf-8",
+                                            dataType: "json",
+                                            success: function (data) {
+                                                var test = "";
+
+                                                var komplexkeuzesArr = new Array();
+                                                komplexkeuzesArr.length = 0;
+                                                var index2 = 0;
+                                                $("input[name='Komplex'").each(function (index, data) {
+                                                    var komplexKeuzeBox = $("#"+data.id);
+                                                    if ($("#"+data.id).is(":checked")) {
+                                                        var komplexkeuzeId = data.id.split('-')[0];
+                                                        var pandtypeID = data.id.split('-')[2];
+                                                        var slpks = data.id.split('-')[1];
+                                                        var komplexkeuzeDto = {
+                                                            Komplex_ID: parseInt(komplexkeuzeId),
+                                                            Pand_Type_ID: parseInt(pandtypeID),
+                                                            Slaapkamers: parseInt(slpks),
+                                                            Contact_Relatie_ID: contactRelatieId
+                                                        };
+                                                        komplexkeuzesArr[index2] = komplexkeuzeDto;
+                                                        index2 = index2 + 1;
+                                                    }
+                                                });
+
+                                                var json4 = JSON.stringify(komplexkeuzesArr);
+                                                jQuery.ajax({
+                                                    type: "POST",
+                                                    url: hostservernaam + "/API/DMZ/Komplex/SaveKandidaatKomplexKeuzes",
+                                                    data: json4,
+                                                    contentType: "application/json; charset=utf-8",
+                                                    dataType: "json",
+                                                    success: function (data) {
+                                                        var test = "";
+                                                        alert("Online inschrijving kandidaat succesvol !!!");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                },
+                error: function (msg) {
+                    var test = msg;
+                },
+            });
+        }
+    </script>
