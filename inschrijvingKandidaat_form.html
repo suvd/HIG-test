@@ -1,0 +1,607 @@
+<div id="stap0" style="display: inline-block;">
+    LEEFTIJD <p>Ben je 18 jaar of ouder?*</p>
+    <input type="radio" name="leeftijd_a" id="leeftijd_1" value="1" onclick="ActieJa();" checked="checked">
+    <label for="leeftijd_1">Ja</label>
+    <br />
+    <input type="radio" name="leeftijd_a" id="leeftijd_2" value="2" onclick="ActieNeen();">
+    <label for="leeftijd_2">Neen</label>
+    <br />
+    <input type="radio" name="leeftijd_a" id="leeftijd_3" value="is ontvoogd" onclick="ActieOntvoogdOfBegeleiding();">
+    <label for="leeftijd_2">Neen, maar ik ben ontvoogd.</label><i title="Je bent ontvoogd wanneer je wettelijk geen ouders of familieleden hebt die voor je zorgen. Dit kan doordat je al gehuwd bent of doordat de jeugdrechter dit beslist heeft." class="tooltip">i</i>
+    <br />
+    <input type="radio" name="leeftijd_a" id="leeftijd_4" value="woont zelfstandig met begeleiding" onclick="ActieOntvoogdOfBegeleiding();">
+    <label for="leeftijd_2">Neen, maar ik woon begeleid zelfstandig of ik plan in de toekomst begeleid zelfstandig te gaan wonen.</label>
+    <br />
+    <div class="c-validation-message">
+        <div class="spacer-10"></div>
+        <div class="typo-style-9">
+            Dit is een verplicht veld
+        </div>
+    </div>
+
+    <div id="MsgBox" style="display:none;">
+        <div class="box-style-2">
+            <p class="typo-style-8">
+                Je kan je uitzonderlijk toch inschrijven. Gelieve hiervoor naar Cordium te komen en de nodige bewijsdocumenten mee te brengen.
+                <a href="https://www.cordium.be/contact/" target="_blank">Openingsuren Cordium</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="MsgBox0" style="display: none;">
+        <div class="box-style-2">
+            <p class="typo-style-8">
+                Je komt wettelijk gezien niet in aanmerking voor het huren van een sociale woning.
+                Wij kunnen je helaas niet inschrijven.
+            </p>
+        </div>
+    </div>
+
+
+    <br />
+    EIGENDOM <p>Heb je een woning of perceel volledig of gedeeltelijk in volle eigendom of in vruchtgebruik in binnen- of buitenland? *</p>
+    <input type="radio" name="eigendom_a" id="eigendom_1" value="1" onclick="ActieJa2();">
+    <label for="eigendom_1">Ja</label>
+    <br />
+    <input type="radio" name="eigendom_a" id="eigendom_2" value="2" onclick="ActieNeen2();" checked="checked">
+    <label for="eigendom_2">Neen</label>
+    <br />
+    <div class="c-validation-message">
+        <div class="spacer-10"></div>
+        <div class="typo-style-9">
+            Dit is een verplicht veld
+        </div>
+    </div>
+    <div id="MsgBox2" style="display: none;">
+        <div class="box-style-2">
+            <p class="typo-style-8">
+                Je komt wettelijk gezien niet in aanmerking voor het huren van een sociale woning.
+                Wij kunnen je helaas niet inschrijven.
+                Hierop zijn echter enkele uitzonderingen mogelijk.
+                <a target="_blank" href="https://www.cordium.be/ik-wil-huren-kopen/kom-ik-in-aanmerking-voor-een-huurwoning-2/voorwaarde4_eigendom/">Meer info hierover</a>
+                Wanneer je voldoet aan een van deze uitzonderingen, gelieve dan naar Cordium te komen en de nodige bewijsdocumenten mee te brengen.
+                <a target="_blank" href="https://www.cordium.be/contact/">Openingsuren Cordium</a>
+            </p>
+        </div>
+    </div>
+
+    <div>
+        <button id="btnConfirm0" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VolgendeStap1(); return false">Volgende stap ></button>
+    </div>
+</div>
+<div id="stap1" style="display: none;">
+    <label>
+        AANVRAGER
+    </label>
+
+    <div>
+        <table>
+            <tr>
+                <td>
+                    Naam * (eerst familienaam invullen, dan voornaam)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" required="required" id="Aanvrager_Naam" style="width: 400px;" value="test example">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Rijksregisternummer *
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" required="required" placeholder="__.__.__-___.__" id="Aanvrager_INSZ" value="91121426351">
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    <div>
+        <table>
+            <tr>
+                <td>
+                    Straatnaam *
+                </td>
+                <td>
+                    Huisnr *
+                </td>
+                <td>
+                    Bus
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" required="required" id="Aanvrager_Straat" value="TEST STREET">
+                </td>
+                <td>
+                    <input type="text" required="required" id="Aanvrager_Huisnr" value="11">
+                </td>
+                <td>
+                    <input type="text" required="required" id="Aanvrager_Busnr" value="">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Postcode *
+                </td>
+                <td>
+                    Gemeente *
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="number" required="required" id="gemeenteCode" min="0000" step="1" value="9000">
+                </td>
+                <td>
+                    <input type="text" required="required" id="gemeente" value="Gent">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Emailadres *
+                </td>
+                <td>
+                    Telefoonnummer / GSM *
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="email" required="required" id="emailadres" pattern=".+@.+" value="gash@gashnet.be">
+                </td>
+                <td>
+                    <input type="tel" required="required" id="telgsmnr" value="0472077741">
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <label>
+        INWONER(S)
+    </label>
+    <div>
+        <div class="col-12">
+            <div class="box-style-7">
+                <p>Zijn er andere inwoners die mee verhuizen? *</p>
+                <input type="radio" name="is-extra" id="extra-n" value="false" onclick="GeenExtraInwoners();">
+                <label for="extra-n">Nee</label>
+
+                <input type="radio" name="is-extra" id="extra-y" value="true" onclick="ExtraInwoners();">
+                <label for="extra-y" class="jcf-label-active">Ja</label>
+
+                <div class="c-validation-message">
+                    <div class="typo-style-9" style="display: none;">
+                        Dit is een verplicht veld
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div id="extraInwoners" style="display: none;">
+                <a id="aantal" style="display: none;">1</a>
+                <div id="inw1">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+                <div id="inw2" style="display: none;">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+                <div id="inw3" style="display: none;">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+                <div id="inw4" style="display: none;">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+                <div id="inw5" style="display: none;">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+                <div id="inw6" style="display: none;">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+                <div id="inw7" style="display: none;">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+                <div id="inw8" style="display: none;">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+                <div id="inw9" style="display: none;">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+                <div id="inw10" style="display: none;">
+                    <table>
+                        <tr>
+                            <td>
+                                Naam * (eerst familienaam invullen, dan voornaam)
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Rijksregisternummer *
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" required="required" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <i class="icon-circle-minus icon-style-1" />
+                    <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Deze inwoner verwijderen</a>
+                    <br />
+                    <br />
+                    <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Inwoner toevoegen<i class="icon-plus-circle"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div>
+        <button id="btnConfirm01" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap0(); return false">Vorige stap <</button>
+    </div>
+    <div>
+        <button id="btnConfirm" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VolgendeStap2_1(); return false">Volgende stap ></button>
+    </div>
+</div>
+
+<div id="stap2_1" style="display:none">
+    <label>KOMPLEXKEUZES - Gemeente kiezen</label>
+    <br />
+    <div id="gemeenteKeuze">
+
+    </div>
+
+    <div id="uw_toepasbarewoningen">
+        <p class="typo-style-18">
+            Totaal aantal woningen waarvoor jij in aanmerking komt in alle gemeentes
+        </p>
+        <p id="aantal_uw_toepasbarewoningen">0</p>
+    </div>
+
+    <div>
+        <button id="btnConfirm02" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap1(); return false">Vorige stap <</button>
+    </div>
+
+    <div>
+        <button id="btnConfirm2" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VolgendeStap2(); return false">Volgende stap ></button>
+    </div>
+</div>
+
+
+<div id="stap2" style="display:none">
+    <label>KOMPLEXKEUZES</label>
+    <br />
+    <br />
+    <br />
+    <div id="komplexkeuzes">
+
+    </div>
+    <div id="uw_gekozenwoningen">
+        <p class="typo-style-18">
+            Totaal aantal woningen waarvoor jij gekozen hebt
+        </p>
+        <p id="aantal_uw_gekozenwoningen">0</p>
+    </div>
+
+    <div>
+        <button id="btnConfirm02" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap2_1(); return false">Vorige stap <</button>
+    </div>
+
+    <div>
+        <button id="btnConfirm2" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VolgendeStap3(); return false">Volgende stap ></button>
+    </div>
+</div>
+
+<div id="stap3" style="display:none">
+
+    <label>WONINGKEUZES</label>
+    <br />
+
+    <div id="woningkeuzes">
+
+    </div>
+
+    <div>
+        <button id="btnConfirm33" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap2(); return false">Vorige stap <</button>
+    </div>
+    <div>
+        <button id="btnConfirm3" type="submit" value="submit" style="width: 150px; height:30px;" onclick="FinalStap(); return false">Volgende stap ></button>
+    </div>
+</div>
+
+
+<div id="finalStep" style="display:none">
+    <label>ATTESTEN-DOCUMENTEN</label>
+
+    <div id="attestdocs">
+
+    </div>
+
+    <div>
+        <button id="btnConfirm04" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VorigeStap3(); return false">Vorige stap <</button>
+    </div>
+    <div>
+        <button id="btnConfirm4" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VerstuurAanvraag()">Verstuur aanvraag ></button>
+    </div>
+
+    <input id="AttestDoc1" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc2" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc3" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc4" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc5" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc6" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc7" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc8" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc9" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc10" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc11" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc12" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc13" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc14" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc15" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc16" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc17" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc18" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc19" type="hidden" name="AttestDocs" value="" />
+    <input id="AttestDoc20" type="hidden" name="AttestDocs" value="" />
+
+</div>
+<div class="modal"></div>
