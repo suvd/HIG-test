@@ -1,4 +1,4 @@
-<script>
+
         var hostservernaam = "https://higpow2.digiportaal.be:6002";
         var Ko_Registertype_Id = 1;
 
@@ -559,4 +559,3 @@
                 },
             });
         }
-    </script>
