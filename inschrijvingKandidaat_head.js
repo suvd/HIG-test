@@ -1,4 +1,4 @@
- <script>
+
         if (typeof JSON !== "object") {
             JSON = {};
         }
@@ -304,4 +304,3 @@
                 };
             }
         }());
-    </script>
