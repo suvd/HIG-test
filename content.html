@@ -1,0 +1,434 @@
+<div class="inschrijving-form_container">
+    <!-- /* 
+        STAP 0
+    */ -->
+    <div id="stap0" style="display: inline-block;">
+        <h2 class="inschrijving-form_title">Leeftijd </h2>
+        <p>Ben je 18 jaar of ouder?<strong>*</strong></p>
+        <input type="radio" name="leeftijd_a" id="leeftijd_1" value="1" onclick="ActieJa();">
+        <label for="leeftijd_1">Ja</label>
+        <br />
+        <input type="radio" name="leeftijd_a" id="leeftijd_2" value="2" onclick="ActieNeen();">
+        <label for="leeftijd_2">Neen</label>
+        <br />
+        <input type="radio" name="leeftijd_a" id="leeftijd_3" value="is ontvoogd" onclick="ActieOntvoogdOfBegeleiding();">
+        <label id="leeftijd_3">Neen, maar ik ben ontvoogd.
+            <div id="tooltip-icon" class="tooltip-icon" onclick="actieTooltip();">?</div>
+        </label>
+        <div id="tooltip-ontvoogd" style="display:none;" class="inschrijving-form_message tooltip">
+            <p>
+                Je bent ontvoogd wanneer je wettelijk geen ouders of familieleden hebt die voor je zorgen. Dit kan doordat je al gehuwd bent of doordat de jeugdrechter dit beslist heeft.
+            </p>
+        </div>
+        <br />
+        <input type="radio" name="leeftijd_a" id="leeftijd_4" value="woont zelfstandig met begeleiding" onclick="ActieOntvoogdOfBegeleiding();">
+        <label for="leeftijd_2">Neen, maar ik woon begeleid zelfstandig of ik plan in de toekomst begeleid zelfstandig te gaan wonen.</label>
+        <br />
+        <div class="c-validation-message">
+            <div class="spacer-10"></div>
+            <div class="typo-style-9"></div>
+        </div>
+
+        <div id="MsgBox" style="display:none;" class="inschrijving-form_message allert">
+            <div class="box-style-2">
+                <p>
+                    Je kan je uitzonderlijk toch inschrijven. Gelieve hiervoor naar Cordium te komen en de nodige bewijsdocumenten mee te brengen.
+                    <a href="https://www.cordium.be/contact/" target="_blank">Openingsuren Cordium</a>
+                </p>
+            </div>
+        </div>
+
+        <div id="MsgBox0" style="display: none;" class="inschrijving-form_message error">
+            <div class="box-style-2">
+                <p>
+                    Je komt wettelijk gezien niet in aanmerking voor het huren van een sociale woning.
+                    Wij kunnen je helaas niet inschrijven.
+                </p>
+            </div>
+        </div>
+
+
+        <br />
+        <h2 class="inschrijving-form_title">Eigendom</h2>
+        <p>Heb je een woning of perceel volledig of gedeeltelijk in volle eigendom of in vruchtgebruik in binnen- of buitenland? <strong>*</strong></p>
+        <input type="radio" name="eigendom_a" id="eigendom_1" value="1" onclick="ActieJa2();">
+        <label for="eigendom_1">Ja</label>
+        <br />
+        <input type="radio" name="eigendom_a" id="eigendom_2" value="2" onclick="ActieNeen2();">
+        <label for="eigendom_2">Neen</label>
+        <br />
+        <div class="c-validation-message">
+            <div class="spacer-10"></div>
+            <div class="typo-style-9"></div>
+        </div>
+        <div id="MsgBox2" style="display: none;" class="inschrijving-form_message allert">
+            <div class="box-style-2">
+                <p class="typo-style-8">
+                    Je komt wettelijk gezien niet in aanmerking voor het huren van een sociale woning.
+                    Wij kunnen je helaas niet inschrijven.
+                    Hierop zijn echter enkele uitzonderingen mogelijk.
+                    <a target="_blank" href="https://www.cordium.be/ik-wil-huren-kopen/kom-ik-in-aanmerking-voor-een-huurwoning-2/voorwaarde4_eigendom/">Meer info hierover</a>
+                    Wanneer je voldoet aan een van deze uitzonderingen, gelieve dan naar Cordium te komen en de nodige bewijsdocumenten mee te brengen.
+                    <a target="_blank" href="https://www.cordium.be/contact/">Openingsuren Cordium</a>
+                </p>
+            </div>
+        </div>
+
+        <div>
+            <button id="btnConfirm0" type="submit" value="submit" style="width: 150px; height:30px;" onclick="VolgendeStap1(); return false">Volgende stap</button>
+        </div>
+    </div>
+
+    <!-- /* 
+        STAP 1
+    */ -->
+    <div id="stap1" style="display: none;" class="inschrijving-form_step-group">
+        <!-- /* AANVRAGER START */ -->
+        <h2 class="inschrijving-form_title">Aanvrager</h2>
+        <!-- name -->
+        <div class="inschrijving-form_input-row">
+            <div class="inschrijving-form_input-column">
+                <label>Naam <strong>*</strong><br>
+                    <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                </label>
+                <input type="text" required="required" id="Aanvrager_Naam" value="">
+                <p id="name-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+            </div>
+            <div class="inschrijving-form_input-column">
+                <label>Rijksregisternummer <strong>*</strong></label><br>
+                <input type="text" required="required" placeholder="__.__.__-___.__" id="Aanvrager_INSZ" value="">
+                <p id="insz-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+            </div>
+        </div>
+
+        <!-- address -->
+        <div class="inschrijving-form_input-row">
+            <div class="inschrijving-form_input-column">
+                <label>Straatnaam <strong>*</strong></label>
+                <input type="text" required="required" id="Aanvrager_Straat" value="">
+                <p id="straat-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+            </div>
+            <div class="inschrijving-form_input-column">
+                <label>Huisnr <strong>*</strong></label>
+                <input type="text" required="required" id="Aanvrager_Huisnr" value="">
+                <p id="huisnr-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+            </div>
+            <div class="inschrijving-form_input-column">
+                <label>Bus</label>
+                <input type="text" required="required" id="Aanvrager_Busnr" value="">
+            </div>
+        </div>
+
+        <div class="inschrijving-form_input-row">
+            <div class="inschrijving-form_input-column">
+                <label>Postcode <strong>*</strong></label>
+                <input type="number" required="required" id="gemeenteCode" min="0000" step="1" value="">
+                <p id="gemeentecode-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+            </div>
+            <div class="inschrijving-form_input-column">
+                <label>Gemeente <strong>*</strong></label>
+                <input type="text" required="required" id="gemeente" value="">
+                <p id="gemeente-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+            </div>
+        </div>
+        
+        <!-- email/tel -->
+        <div class="inschrijving-form_input-row">
+            <div class="inschrijving-form_input-column">
+                <label>Emailadres <strong>*</strong></label>
+                <input type="email" required="required" id="emailadres" pattern=".+@.+" value="">
+                <p id="email-error" class="inschrijving-form_error-message invisible"></p>
+            </div>
+            <div class="inschrijving-form_input-column">
+                <label>Telefoonnummer / GSM <strong>*</strong></label>
+                <input type="tel" required="required" id="telgsmnr" value="">
+                <p id="phone-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+            </div>
+        </div>
+
+        <!-- privacy -->
+        <div>
+            <input type="checkbox" name="werkwijze" id="werkwijze" value="false">
+            <label for="extra-n">Ik ga akkoord met de werkwijze van huuringent</label>
+            <p id="werkwijze-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+        </div>
+        <div>
+            <input type="checkbox" name="privacy" id="privacy" value="false">
+            <label for="extra-n">Ik ga akkoord met de <a href="https://hig-website.webflow.io/privacy" alt="privacy" target="blank">privacy regels</a> van huuringent</label>
+            <p id="privacy-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+        </div>
+        <!-- /* AANVRAGER END */ -->
+
+        <!-- /* INWONERS START */ -->
+        <h2 class="inschrijving-form_title">Inwoners</h2>
+                <!-- /* inwoner 1 */ -->
+                <div class="box-style-7">
+                    <p>Zijn er andere inwoners die mee verhuizen? <strong> *</strong></p>
+                    
+                    <input type="radio" name="is-extra" id="extra-n" value="false" onclick="GeenExtraInwoners();">
+                    <label for="extra-n">Nee</label>
+
+                    <input type="radio" name="is-extra" id="extra-y" value="true" onclick="ExtraInwoners();">
+                    <label for="extra-y" class="jcf-label-active">Ja</label>
+                    
+                    <p id="inwoners-error" class="inschrijving-form_error-message invisible">Dit veld is verplicht</p>
+                </div>
+                <br />
+                <div id="extraInwoners" style="display: none;">
+                    <a id="aantal" style="display: none;">1</a>
+                    <!-- /* inwoner 1 */ -->
+                    <div id="inw1" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <!-- /* inwoner 2 */ -->
+                    <div id="inw2" style="display: none;" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <!-- /* inwoner 3 */ -->
+                    <div id="inw3" style="display: none;" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <!-- /* inwoner 4 */ -->
+                    <div id="inw4" style="display: none;" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <!-- /* inwoner 5 */ -->
+                    <div id="inw5" style="display: none;" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <!-- /* inwoner 6 */ -->
+                    <div id="inw6" style="display: none;" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <!-- /* inwoner 7 */ -->
+                    <div id="inw7" style="display: none;" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <!-- /* inwoner 8 */ -->
+                    <div id="inw8" style="display: none;" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <!-- /* inwoner 9 */ -->
+                    <div id="inw9" style="display: none;" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <!-- /* inwoner 10 */ -->
+                    <div id="inw10" style="display: none;" class="inschrijving-form_input-row">
+                        <div class="inschrijving-form_input-column">
+                            <label>Naam <strong>*</strong><br>
+                                <span class="comment">(eerst familienaam invullen, dan voornaam)</span>
+                            </label>
+                            <input type="text" required="required" id="inwonerNaam" name="extra-person-0" style="width: 400px;" value="test example2">
+                        </div>
+                        <div class="inschrijving-form_input-column">
+                            <label>Rijksregisternummer</label><br>
+                            <input type="text" placeholder="__.__.__-___.__" id="inwonerINSZ" name="extra-person-0" value="91121426351">
+                        </div>
+                    </div>
+                    <div class="inschrijving-form_input-column">
+                        <a href="javascript:void(0)" class="button-style-3" onclick="DeleteInwoner();">Laatste inwoner verwijderen</a>
+                        <a href="javascript:void(0)" class="button-style-1" onclick="AddInwoner();">Extra inwoner toevoegen</a>
+                    </div>
+                </div>
+            <br />
+            <div class="inschrijving-form_buttongroup">
+                <div>
+                    <button id="btnConfirm01" type="submit" value="submit" onclick="VorigeStap0(); return false">Vorige stap</button>
+                </div>
+                <div>
+                    <button id="btnConfirm" type="submit" value="submit" onclick="VolgendeStap2_1(); return false">Volgende stap</button>
+                </div>
+            </div>
+        </div>
+    <!-- /* INWONERS END */ -->
+
+    <!-- /* COMPLEXKEUZE START */ -->
+    <div id="stap2_1" style="display: none;" class="inschrijving-form_step-group">
+        <h2 class="inschrijving-form_title">Kies je gemeente</h2>
+        <div id="gemeenteKeuze">
+
+        </div>
+
+        <div id="uw_toepasbarewoningen">
+            <p class="typo-style-18">
+                Totaal aantal woningen waarvoor jij in aanmerking komt in alle gemeentes
+            </p>
+            <p id="aantal_uw_toepasbarewoningen">0</p>
+        </div>
+
+        <div class="inschrijving-form_buttongroup">
+            <div>
+                <button id="btnConfirm02" type="submit" value="submit" onclick="VorigeStap1(); return false">Vorige stap</button>
+            </div>
+            <div>
+                <button id="btnConfirm2" type="submit" value="submit" onclick="VolgendeStap2(); return false">Volgende stap</button>
+            </div>
+        </div>
+    </div>
+    <!-- /* COMPLEXKEUZE END */ -->
+
+    <!-- /* COMPLEXKEUZE BEVESTIGING START */ -->
+    <div id="stap2" style="display: none;" class="inschrijving-form_step-group">
+        <h2 class="inschrijving-form_title">Woning keuzes</h2>
+        <div id="komplexkeuzes">
+
+        </div>
+        <div id="uw_gekozenwoningen">
+            <p class="typo-style-18">
+                Totaal aantal woningen waarvoor jij gekozen hebt
+            </p>
+            <p id="aantal_uw_gekozenwoningen">0</p>
+        </div>
+
+        <div class="inschrijving-form_buttongroup">
+            <div>
+                <button id="btnConfirm02" type="submit" value="submit" onclick="VorigeStap2_1(); return false">Vorige stap</button>
+            </div>
+            <div>
+                <button id="btnConfirm2" type="submit" value="submit" onclick="VolgendeStap3(); return false">Volgende stap</button>
+            </div>
+        </div>
+    </div>
+    <!-- /* COMPLEXKEUZE BEVESTIGING END */ -->
+
+    <div id="stap3" style="display:none" class="inschrijving-form_step-group">
+        <h2 class="inschrijving-form_title">Overzicht woning keuzes</h2>
+        <label>WONINGKEUZES</label>
+        <br />
+
+        <div id="woningkeuzes">
+
+        </div>
+
+        <div class="inschrijving-form_buttongroup">
+            <div>
+                <button id="btnConfirm33"  type="submit" value="submit" onclick="VorigeStap2(); return false">Vorige stap</button>
+            </div>
+            <div>
+                <button id="btnConfirm3" type="submit" value="submit" onclick="FinalStap(); return false">Volgende stap</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="finalStep" style="display:none" class="inschrijving-form_step-group">
+        <label>ATTESTEN-DOCUMENTEN</label>
+
+        <div id="attestdocs">
+
+        </div>
+        
+        <div class="inschrijving-form_buttongroup">
+            <div>
+                <button id="btnConfirm04"  type="submit" value="submit" onclick="VorigeStap3(); return false">Vorige stap</button>
+            </div>
+            <div>
+                <button id="btnConfirm4" type="submit" value="submit" onclick="VerstuurAanvraag()">Volgende stap</button>
+            </div>
+        </div>
+
+        <input id="AttestDoc1" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc2" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc3" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc4" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc5" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc6" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc7" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc8" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc9" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc10" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc11" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc12" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc13" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc14" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc15" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc16" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc17" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc18" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc19" type="hidden" name="AttestDocs" value="" />
+        <input id="AttestDoc20" type="hidden" name="AttestDocs" value="" />
+
+    </div>
+    <div class="modal"></div>
+</div>
