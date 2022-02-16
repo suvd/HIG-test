@@ -1,0 +1,253 @@
+/* 
+    CONTAINER 
+*/
+
+.inschrijving-form_container{
+    max-width: 1000px;
+    margin: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+    opacity: 1;
+    font-family: 'Fira Sans', sans-serif;
+    color: #7c7979;
+    font-weight: 400;
+    line-height: 150%;
+}
+
+.inschrijving-form_step-group{
+    width: 100%;
+}
+
+/* 
+    TYPOGRAPHY 
+*/
+
+.inschrijving-form_title{
+    max-width: 100%;
+    margin: 15px auto 15px 0px;
+    opacity: 1;
+    font-family: 'Fira Sans', sans-serif;
+    color: #7c7979;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.inschrijving-form_container a{
+    color: #7c7979;
+    text-decoration: underline;
+}
+
+/* 
+    BUTTONS
+*/
+
+
+.inschrijving-form_container button{
+    margin-right: 20px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    background-color: #f2bf61;
+    font-family: 'Fira Sans', sans-serif;
+    font-weight: 500;
+
+    clear: both;
+    border: 0 none;
+    border-radius: 0px;
+    transition: all 0.23s ease-in-out 0s;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 32px;
+    padding: 0 22px;
+
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: normal;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: top;
+    white-space: nowrap;
+    width: auto;
+    min-height: 4em;
+}
+
+.inschrijving-form_container button:disabled, .inschrijving-form_container button.disabled {
+    background-color: RGBA(235, 192, 112, 0.30);
+    cursor: not-allowed;
+}
+
+.inschrijving-form_buttongroup{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* 
+    ERROR/SUCCESS 
+*/
+
+.inschrijving-form_message{
+    padding: 5px 10px;
+    color: #7c7979;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+}
+
+.inschrijving-form_message p{
+    margin-block-start: 0px;
+    margin-block-end: 0px;
+}
+
+.error{
+    background-color: RGBA(216, 100, 76, 0.30);
+    color: #7c7979;
+}
+
+.allert{
+    background-color: RGBA(235, 192, 112, 0.30);
+    color: #7c7979;
+}
+
+.tooltip{
+    color: #7c7979;
+    font-style: italic;
+    margin-bottom: 1em;
+    margin-top: -1em;
+    margin-left: 15px;
+}
+
+.tooltip-icon{
+    color: white;
+    background-color: #7c7979;
+    border-radius: 100px;
+    min-width: 20px;
+    width: 20px;
+    max-height: 20px;
+    height: 20px;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    line-height: 20px;
+}
+
+/* 
+    FORMFIELDS 
+*/
+
+/* STYLING */
+
+label{
+    margin-bottom: 0.5em;
+}
+
+label strong, p strong{
+    color: RGBA(216, 100, 76, 1.00);
+}
+
+label span.comment{
+    font-style: italic;
+    font-size: 80%;
+}
+
+p span{
+    color: RGBA(216, 100, 76, 1.00);
+}
+
+/* GRID */
+
+.inschrijving-form_input-column{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-right: 0em;
+}
+
+.inschrijving-form_input-column:last-child{
+    margin-right: 0em;
+}
+
+.inschrijving-form_input-row{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+@media only screen and (min-width: 850px) {
+    .inschrijving-form_input-column{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-right: 2em;
+    }
+    
+    .inschrijving-form_input-column:last-child{
+        margin-right: 0em;
+    }
+    
+    .inschrijving-form_input-row{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+/* INPUTS */
+
+input{
+    margin-bottom: 2em;
+}
+
+input[type=text], input[type=number], input[type=email], input[type=tel]{
+    border-radius: none;
+    border: 1px solid #7c7979;
+    background-color: #f5f5f5;
+
+    color: #7c7979;
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 400;
+
+    display: inline-block;
+    padding: 5px 10px;
+    margin-bottom: 2em;
+    outline: none !important;
+}
+
+input[type=text]:focus, input[type=number]:focus, input[type=email]:focus, input[type=tel]:focus{
+    border-radius: none;
+    border: 1px solid RGBA(118, 167, 208, 1.00);
+    background-color: #f5f5f5;
+
+    color: #7c7979;
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: 400;
+
+    display: inline-block;
+    width: auto;
+    padding: 5px 10px;
+    margin-bottom: 2em;
+    
+    box-shadow: 0 0 0 1pt RGBA(118, 167, 208, 1.00);
+    outline: none !important;
+}
+
+/* ERROR */
+
+input[type=text].error, input[type=number].error, input[type=email].error, input[type=tel].error{
+    background-color: RGBA(216, 100, 75, 0.1);
+    border: 1px solid RGBA(216, 100, 75, 1);
+}
+
+.inschrijving-form_error-message{
+    display: block;
+    color: RGBA(216, 100, 75, 1);
+    background-color: RGBA(216, 100, 75, 0.1);
+    margin-top: -2.2em;
+    padding: 0px 5px;
+    display: inline-block;
+    font-size: 80%;
+}
+
+.inschrijving-form_error-message.invisible{
+    display: none;
+}

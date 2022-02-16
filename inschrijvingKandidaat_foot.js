@@ -24,8 +24,21 @@
             $("#MsgBox0").css("display", "none");
             $("#MsgBox2").css("display", "none");
             $(".c-validation-message").css("display", "none");
-            $(".typo-style-8").css("color", "lightblue");
             var opm = $('input[name=leeftijd_a]:checked').val();
+        }
+
+        function actieTooltip(e) {
+            console.log('tooltip clicked')
+            if($("#tooltip-icon").hasClass("active")){
+                console.log('hasclass')
+                $("#tooltip-icon").removeClass("active");
+                $("#tooltip-ontvoogd").css("display", "none");
+            } else {
+                console.log('has no class')
+                $("#tooltip-icon").addClass("active");
+                $("#tooltip-ontvoogd").css("display", "inline-block");
+            }
+            
         }
 
         function ActieJa() {
@@ -38,7 +51,6 @@
 
         function ActieNeen() {
             $("#MsgBox0").css("display", "inline-block");
-            $(".typo-style-8").css("color", "red");
             $("#MsgBox").css("display", "none");
             $("#MsgBox2").css("display", "none");
             $(".c-validation-message").css("display", "none");
@@ -49,7 +61,6 @@
             $("#MsgBox2").css("display", "inline-block");
             $("#MsgBox0").css("display", "none");
             $("#MsgBox").css("display", "none");
-            $(".typo-style-8").css("color", "red");
             $(".c-validation-message").css("display", "none");
             $("#btnConfirm0").prop("disabled", true);
         }
@@ -71,7 +82,7 @@
         }
 
         function ExtraInwoners() {
-            $("#extraInwoners").css("display", "inline-block");
+            $("#extraInwoners").css("display", "block");
             var aantal = $('#aantal').text();
             var counter = parseInt(aantal) + 1;
             $('#aantal').text(counter);
@@ -92,7 +103,7 @@
             var counter = parseInt(aantal) + 1;
             $('#aantal').text(counter);
             var cp = $("#extraInwoners").html();
-            $("#inw" + counter).css("display", "inline-block");
+            $("#inw" + counter).css("display", "flex");
         }
 
         function VolgendeStap1() {
@@ -123,63 +134,302 @@
             $("#stap2_1").css("display", "inline-block");
         }
 
-        function VolgendeStap2_1() {
-            $("#stap1").css("display", "none");
-            var aantalInwoners = $('#aantal').text();
+        /*
+        // FORM VALIDATION START
+        */
 
-            jQuery.ajax({
-                type: "GET",
-                url: hostservernaam + "/API/DMZ/Komplex/GetKeuzeGemeentes",
-                success: function (data) {
-                    if (data !== null) {
-						var ulGemeenteId = document.getElementById("ul_Gemeentes1");
-                        if (!ulGemeenteId) 
-						{
-							var ulGemeente = document.createElement("ul");
-							ulGemeente.id = "ul_Gemeentes1";
+        // validate name
+        function validateName(name) {
+            let error
+            if (name.val().length == 0) {
+                name.addClass('error');
+                error += 'name error';
+                $("#name-error").removeClass('invisible');
+            } else {
+                name.removeClass('error');
+                error = '';
+                $("#name-error").addClass('invisible');
+            }
+            return error;
+        }
 
-							for (var i = 0; i < data.length; i++) {
-								var liGemeente = document.createElement("li");
-								liGemeente.id = "li_Gemeente1_" + data[i].Omschrijving;
+        // validate Aanvrager_INSZ
+        function validateInsz(insz) {
+            let error
+            if (insz.val().length == 0) {
+                insz.addClass('error');
+                error += 'insz error';
+                $("#insz-error").removeClass('invisible');
+            } else {
+                insz.removeClass('error');
+                error = '';
+                $("#insz-error").addClass('invisible');
+            }
+            return error;
+        }
 
-								var chkboxGemeente = document.createElement("input");
-								chkboxGemeente.type = "checkbox";
-								chkboxGemeente.id = "gemeenteBox_" + data[i].Gemeente_ID + "_" + data[i].Code + "_" + data[i].Omschrijving;
-								chkboxGemeente.className = "GemeenteClass";
-								chkboxGemeente.value = data[i].Gemeente_ID;
+        // validate Aanvrager_Straat
+        function validateStraat(straat) {
+            let error
 
-								var lblGemeente = document.createElement("label");
-								lblGemeente.setAttribute("for", "gemeenteBox_" + data[i].Gemeente_ID + "_" + data[i].Code + "_" + data[i].Omschrijving);
-								lblGemeente.innerText = data[i].Code + " " + data[i].Omschrijving;
+            if (straat.val().length == 0) {
+                straat.addClass('error');
+                error += 'straat error';
+                $("#straat-error").removeClass('invisible');
+            } else {
+                straat.removeClass('error');
+                error = '';
+                $("#straat-error").addClass('invisible');
+            }
+            return error;
+        }
 
-								liGemeente.appendChild(chkboxGemeente);
-								liGemeente.appendChild(lblGemeente);
-
-								ulGemeente.appendChild(liGemeente);
-							}
-							var gemeenteKeuze = document.getElementById("gemeenteKeuze");
-							gemeenteKeuze.appendChild(ulGemeente);
-						}
-                    }
+        // validate Huisnr
+        function validateHuisnr(Huisnr) {
+            let error
+        
+            if (Huisnr.val().length == 0) {
+                Huisnr.addClass('error');
+                error += 'huisnr error empty';
+                $("#huisnr-error").removeClass('invisible');
+            } else {
+                Huisnr.removeClass('error')
+                if (!isNaN(Huisnr.val())) {
+                    Huisnr.removeClass('error');
+                    error = '';
+                    $("#huisnr-error").addClass('invisible');
+                } else {
+                    Huisnr.addClass('error');
+                    error += 'huisnr error false';
+                    $("#huisnr-error")[0].innerHTML = "Vul hier een nummer in";
+                    $("#huisnr-error").removeClass('invisible');
                 }
-            });
+            }
+            return error;
+        }
 
-            var somAantalVerhuurbarePanden = 0;
-            jQuery.ajax({
-                type: "GET",
-                url: hostservernaam + "/API/DMZ/Komplex/GetKandidaatKomplexKeuzes/" + aantalInwoners + "/" + Ko_Registertype_Id + "/" + "",
-                success: function (data) {
-                    if (data !== null) {
-                        for (var i = 0; i < data.length; i++) {
-                            somAantalVerhuurbarePanden = somAantalVerhuurbarePanden + data[i].AantalVerhuurbarePanden;
+        // validate Aanvrager_Gemeentecode
+        function validateGemeentecode(code) {
+            let error
+            if (code.val().length > 4 | code.val().length < 4) {
+                code.addClass('error')
+                error += 'gemeentecode error false';
+                $("#gemeentecode-error").removeClass('invisible');
+            } else {
+                code.removeClass('error')
+                error = '';
+                $("#gemeentecode-error").addClass('invisible');
+            }
+            return error;
+        }
+
+        // validate Aanvrager_gemeente
+        function validateGemeente(gemeente) {
+            let error
+            if (gemeente.val().length == 0) {
+                gemeente.addClass('error')
+                error += 'gemeente error false';
+                $("#gemeente-error").removeClass('invisible');
+            } else {
+                gemeente.removeClass('error')
+                error = '';
+                $("#gemeente-error").addClass('invisible');
+            }
+            return error;
+        }
+
+        // validate email
+        function trim(s) {
+            return s.replace(/^\s+|\s+$/, '');
+        }
+
+        function validateEmail(email) {
+            let error
+            var temail = trim(email.val()); // value of field with whitespace trimmed off
+            var emailFilter = /^[^@]+@[^@.]+\.[^@]*\w\w$/;
+            var illegalChars = /[\(\)\<\>\,\;\:\\\"\[\]]/;
+        
+            if (email.val() == "") {
+                email.addClass('error')
+                $("#email-error")[0].innerHTML = "Het invullen van een email is verplicht";
+                $("#email-error").removeClass('invisible');
+                error += 'email error empty';
+            } else if (!emailFilter.test(temail)) { //test email for illegal characters
+                email.addClass('error')
+                $("#email-error")[0].innerHTML = "Vul een geldig emailadres in";
+                $("#email-error").removeClass('invisible');
+                error += 'email error wrong';
+            } else if (email.val().match(illegalChars)) {
+                email.addClass('error')
+                $("#email-error")[0].innerHTML = "Vul een geldig emailadres in";
+                $("#email-error").removeClass('invisible');
+                error += 'email error illegal characters';
+            } else {
+                $("#email-error").addClass('invisible');
+                email.removeClass('error')
+                error = '';
+            }
+            return error;
+        }
+
+        // validate tel
+        function validatePhone(telnummer) {
+            let error
+            var stripped = telnummer.val().replace(/[\(\)\.\-\ ]/g, '');
+
+            if (telnummer.val() == "") {
+                telnummer.addClass('error')
+                error += 'telnummer error illegal empty';
+                $("#phone-error").removeClass('invisible');
+            } else if (isNaN(parseInt(stripped))) {
+                telnummer.addClass('error')
+                error += 'telnummer error illegal characters';
+                $("#phone-error")[0].innerHTML = "Vul een geldig telefoonnummer in";
+                $("#phone-error").removeClass('invisible');
+            } else if (stripped.length < 10) {
+                telnummer.addClass('error')
+                error += 'telnummer error length';
+                $("#phone-error")[0].innerHTML = "Vul een geldig telefoonnummer in";
+                $("#phone-error").removeClass('invisible');
+            } else {
+                telnummer.removeClass('error')
+                error = '';
+                $("#phone-error").addClass('invisible');
+            }
+            return error;
+        }
+
+        // validate inwoners 
+        function validateInwoners(inwoners) {
+            // TODO: inwoner validation
+            let error
+            if (inwoners[0].checked == false && inwoners[1].checked == false){
+                error += 'inwoner error empty';
+                $("#inwoners-error").removeClass('invisible');
+                inwoners.addClass('error')
+            } else {
+                $("#inwoners-error").addClass('invisible');
+                inwoners.removeClass('error')
+                error = '';
+            }
+            return error;
+        }
+
+        // validate werkwijze 
+        function validateWerkwijze(werkwijze) {
+            let error
+            console.log(werkwijze)
+            if (werkwijze[0].checked === false) {
+                error += 'werkwijze error not checked';
+                $("#werkwijze-error").removeClass('invisible');
+            } else {
+                error = '';
+                $("#werkwijze-error").addClass('invisible');
+            }
+            return error;
+        }
+
+         // validate privacy 
+        function validatePrivacy(privacy) {
+            let error
+            if (privacy[0].checked === false) {
+                error += 'privacy error not checked';
+                $("#privacy-error").removeClass('invisible');
+            } else {
+                error = '';
+                $("#privacy-error").addClass('invisible');
+            }
+            return error;
+        }
+
+        /*
+        // FORM VALIDATION END
+        */
+
+
+        function VolgendeStap2_1() {
+            // FORM VALIDATION
+            let reason = "";
+
+            reason += validateName($("#Aanvrager_Naam"));
+            reason += validateInsz($("#Aanvrager_INSZ"));
+            reason += validateStraat($("#Aanvrager_Straat"));
+            reason += validateHuisnr($("#Aanvrager_Huisnr"));
+            reason += validateGemeentecode($("#gemeenteCode"));
+            reason += validateGemeente($("#gemeente"));
+            reason += validateEmail($("#emailadres"));
+            reason += validatePhone($("#telgsmnr"));
+            reason += validateWerkwijze($("#werkwijze"));
+            reason += validatePrivacy($("#privacy"));
+            reason += validateInwoners($("[name='is-extra']"));
+
+            if (reason.length > 0) { 
+                // form error
+                return false 
+            } else { 
+                 // form validated
+                $("#stap1").css("display", "none");
+                var aantalInwoners = $('#aantal').text();
+    
+                jQuery.ajax({
+                    type: "GET",
+                    url: hostservernaam + "/API/DMZ/Komplex/GetKeuzeGemeentes",
+                    success: function (data) {
+                        console.log('Get keuzegemeentes')
+                        console.log(data)
+                        if (data !== null) {
+                            var ulGemeenteId = document.getElementById("ul_Gemeentes1");
+                            if (!ulGemeenteId) 
+                            {
+                                var ulGemeente = document.createElement("ul");
+                                ulGemeente.id = "ul_Gemeentes1";
+    
+                                for (var i = 0; i < data.length; i++) {
+                                    var liGemeente = document.createElement("li");
+                                    liGemeente.id = "li_Gemeente1_" + data[i].Omschrijving;
+    
+                                    var chkboxGemeente = document.createElement("input");
+                                    chkboxGemeente.type = "checkbox";
+                                    chkboxGemeente.id = "gemeenteBox_" + data[i].Gemeente_ID + "_" + data[i].Code + "_" + data[i].Omschrijving;
+                                    chkboxGemeente.className = "GemeenteClass";
+                                    chkboxGemeente.value = data[i].Gemeente_ID;
+    
+                                    var lblGemeente = document.createElement("label");
+                                    lblGemeente.setAttribute("for", "gemeenteBox_" + data[i].Gemeente_ID + "_" + data[i].Code + "_" + data[i].Omschrijving);
+                                    lblGemeente.innerText = data[i].Code + " " + data[i].Omschrijving;
+    
+                                    liGemeente.appendChild(chkboxGemeente);
+                                    liGemeente.appendChild(lblGemeente);
+    
+                                    ulGemeente.appendChild(liGemeente);
+                                }
+                                var gemeenteKeuze = document.getElementById("gemeenteKeuze");
+                                gemeenteKeuze.appendChild(ulGemeente);
+                            }
                         }
                     }
-                    $("#aantal_uw_toepasbarewoningen").text(somAantalVerhuurbarePanden);
-                }
-            });
+                });
+    
+                var somAantalVerhuurbarePanden = 0;
+                jQuery.ajax({
+                    type: "GET",
+                    url: hostservernaam + "/API/DMZ/Komplex/GetKandidaatKomplexKeuzes/" + aantalInwoners + "/" + Ko_Registertype_Id + "/" + "",
+                    success: function (data) {
+                        console.log('GET NUMBER PROPERTIES')
+                        console.log(data)
 
+                        if (data !== null) {
+                            for (var i = 0; i < data.length; i++) {
+                                somAantalVerhuurbarePanden = somAantalVerhuurbarePanden + data[i].AantalVerhuurbarePanden;
+                            }
+                        }
+                        $("#aantal_uw_toepasbarewoningen").text(somAantalVerhuurbarePanden);
+                    }
+                });
 
-            $("#stap2_1").css("display", "inline-block");
+                $("#stap2_1").css("display", "inline-block");
+            } 
+
         }
 
         function VolgendeStap2() {
